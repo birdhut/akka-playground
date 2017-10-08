@@ -10,8 +10,10 @@ namespace AkkaPlayground
     /// </summary>
     internal class Program
     {
+        private const string OWIN_URL = "http://localhost:8080";
         private static ActorSystem actorSystem;
         private static IActorRef _root;
+        private static IDisposable _webApp;
 
         /// <summary>
         /// Entry point for application
@@ -19,13 +21,33 @@ namespace AkkaPlayground
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            actorSystem = ActorSystem.Create("akka-playground");
-
-            _root = actorSystem.ActorOf(Props.Create<RootActor>(), "root");
+            StartAkka();
+            StartWebApp();
 
             Console.ReadLine();
 
+            if (_webApp != null)
+            {
+                _webApp.Dispose();
+            }
+        }
 
+        /// <summary>
+        /// Configures the Akka Actor Syste,
+        /// </summary>
+        private static void StartAkka()
+        {
+            actorSystem = ActorSystem.Create("akka-playground");
+            _root = actorSystem.ActorOf(Props.Create<RootActor>(), "root");
+        }
+
+        /// <summary>
+        /// Configures the Owin SignalR Web App
+        /// </summary>
+        private static void StartWebApp()
+        {
+            _webApp = Microsoft.Owin.Hosting.WebApp.Start(OWIN_URL);
+            Console.WriteLine($"Web Server started at {OWIN_URL}");
         }
 
         /// <summary>
