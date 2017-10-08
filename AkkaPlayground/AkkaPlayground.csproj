@@ -85,12 +85,15 @@
     <Compile Include="Actors\OutputWriterActor.cs" />
     <Compile Include="Actors\RootActor.cs" />
     <Compile Include="Actors\StatActor.cs" />
+    <Compile Include="Actors\UsageDispatcherActor.cs" />
+    <Compile Include="Hubs\UsageHub.cs" />
     <Compile Include="Messages\CollectMessage.cs" />
     <Compile Include="Messages\CollectStatsMessage.cs" />
     <Compile Include="Messages\CpuMessage.cs" />
     <Compile Include="Messages\Enumerations.cs" />
     <Compile Include="Messages\MemoryMessage.cs" />
     <Compile Include="Messages\SimpleMessage.cs" />
+    <Compile Include="Messages\UsageMessage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

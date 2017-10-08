@@ -46,7 +46,7 @@ namespace AkkaPlayground
         /// </summary>
         private static void StartWebApp()
         {
-            _webApp = Microsoft.Owin.Hosting.WebApp.Start(OWIN_URL);
+            _webApp = Microsoft.Owin.Hosting.WebApp.Start<Startup>(OWIN_URL);
             Console.WriteLine($"Web Server started at {OWIN_URL}");
         }
 
