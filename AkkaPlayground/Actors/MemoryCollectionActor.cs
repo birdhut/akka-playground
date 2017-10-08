@@ -27,7 +27,7 @@ namespace AkkaPlayground.Actors
 
 
         /// <summary>
-        /// Collects memory usage stats and forwards to the <see cref="CollectMessage.Receiver"/>
+        /// Collects memory usage stats and forwards to the <see cref="CollectMessage.Receivers"/>
         /// </summary>
         /// <param name="message"><see cref="CollectMessage"/></param>
         private void CollectStats(CollectMessage message)
@@ -44,8 +44,11 @@ namespace AkkaPlayground.Actors
             if (memoryValues != null)
             {
                 var used = (memoryValues.TotalVisibleMemorySize - memoryValues.FreePhysicalMemory);
-
-                message.Receiver.Tell(new MemoryMessage(used));
+                var msg = new MemoryMessage(used);
+                foreach(var r in message.Receivers)
+                {
+                    r.Tell(msg);
+                }
             }
         }
     }

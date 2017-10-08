@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System.Collections.Generic;
+using Akka.Actor;
 using System;
 namespace AkkaPlayground.Messages
 {
@@ -9,9 +10,9 @@ namespace AkkaPlayground.Messages
     public class CollectMessage
     {
         /// <summary>
-        /// The output actor to forward results to
+        /// The output actors to forward results to
         /// </summary>
-        public IActorRef Receiver { get; private set; }
+        public IEnumerable<IActorRef> Receivers { get; private set; }
 
         /// <summary>
         /// The type of collection that this is for
@@ -27,11 +28,11 @@ namespace AkkaPlayground.Messages
         /// <summary>
         /// Initialises the object using the given <see cref="IActorRef"/> receiver and <see cref="CollectionType"/>
         /// </summary>
-        /// <param name="receiver">The receiver that will output result</param>
+        /// <param name="receivers">The receivers that will output result</param>
         /// <param name="type">The type of stats to collect</param>
-        public CollectMessage(IActorRef receiver, CollectionType type)
+        public CollectMessage(IEnumerable<IActorRef> receivers, CollectionType type)
         {
-            Receiver = receiver;
+            Receivers = receivers;
             Collect = type;
             CollectUtc = DateTime.UtcNow;
         }

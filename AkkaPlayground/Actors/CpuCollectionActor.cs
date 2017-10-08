@@ -23,12 +23,12 @@ namespace AkkaPlayground.Actors
         }
 
         /// <summary>
-        /// Collects cpu usage stats and forwards to the <see cref="CollectMessage.Receiver"/>
+        /// Collects cpu usage stats and forwards to the <see cref="CollectMessage.Receivers"/>
         /// </summary>
         /// <param name="message"><see cref="CollectMessage"/></param>
         private void CollectStats(CollectMessage message)
         {
-            _output.Tell(new SimpleMessage($"MemoryCollectionActor received collect dated {message.CollectUtc:dd/MM/yyyy HH:mm:ss}"));
+            _output.Tell(new SimpleMessage($"CpuCollectionActor received collect dated {message.CollectUtc:dd/MM/yyyy HH:mm:ss}"));
 
             var processorSearcher = new ManagementObjectSearcher(@"root\CIMV2",
                 "SELECT * FROM Win32_PerfFormattedData_Counters_ProcessorInformation");
@@ -38,7 +38,11 @@ namespace AkkaPlayground.Actors
             if (obj != null)
             { 
                 var percent = double.Parse(obj["PercentProcessorTime"].ToString());
-                message.Receiver.Tell(new CpuMessage(percent/100));
+                var msg = new CpuMessage(percent / 100);
+                foreach(var r in message.Receivers)
+                {
+                    r.Tell(msg);
+                }
             }
         }
     }
