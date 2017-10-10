@@ -13,6 +13,7 @@ namespace AkkaPlayground.Actors
         private IActorRef _memActor;
         private IActorRef _cpuActor;
         private ActorSelection _output;
+        private IActorRef _dispatchActor;
 
         /// <summary>
         /// Initialises the object creating a <see cref="MemoryCollectionActor"/> and a <see cref="CpuCollectionActor"/>
@@ -22,8 +23,9 @@ namespace AkkaPlayground.Actors
         {
             _memActor = Context.ActorOf<MemoryCollectionActor>("memory");
             _cpuActor = Context.ActorOf<CpuCollectionActor>("cpu");
+            _dispatchActor = Context.ActorOf<UsageDispatcherActor>("dispatch");
 
-            
+
             Receive<CollectStatsMessage>(m => RequestStats(m), m => m.ReceivingActor != null);
             _output = Program.FindOutput();
             _output.Tell(new SimpleMessage("StatActor created"));
@@ -37,8 +39,14 @@ namespace AkkaPlayground.Actors
         private void RequestStats(CollectStatsMessage message)
         {
             _output.Tell(new SimpleMessage($"StatActor received collection dated {message.DateUtc:dd/MM/yyyy HH:mm:ss}"));
-            _memActor.Tell(new CollectMessage(message.ReceivingActor, CollectionType.Memory));
-            _cpuActor.Tell(new CollectMessage(message.ReceivingActor, CollectionType.CPU));
+            IActorRef[] receivers = new IActorRef[]
+            {
+                _dispatchActor,
+                message.ReceivingActor
+            };
+
+            _memActor.Tell(new CollectMessage(receivers, CollectionType.Memory));
+            _cpuActor.Tell(new CollectMessage(receivers, CollectionType.CPU));
         }
     }
 }
